@@ -1,0 +1,10 @@
+flask==2.0.1
+SpeechRecognition==3.8.1
+transformers==4.30.2
+torch==2.6.0
+soundfile==0.12.1
+numpy==1.24.3
+PyQt6==6.4.2
+pyqt6-tools==6.4.2.3.2
+python-dotenv==1.0.0
+Pillow==10.0.0

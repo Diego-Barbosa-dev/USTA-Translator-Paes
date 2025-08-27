@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Traductor de lenguas indígenas con capacidad de grabación de voz">
+    <title>Traductor</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <main class="container" role="main">
+        <h1>Traductor</h1>
+        
+        <div class="language-selector">
+            <label for="targetLanguage">Seleccione la lengua indígena:</label>
+            <select id="targetLanguage" name="target_lang" class="language-select" aria-label="Seleccionar lengua indígena para traducción">
+                <option value="sikuani">Sikuani</option>
+                <option value="piapoco">Piapoco</option>
+                <option value="achagua">Achagua</option>
+                <option value="guayabero">Guayabero</option>
+            </select>
+        </div>
+
+        <div class="offline-indicator" id="offlineStatus">
+            <span class="offline-icon">📱</span>
+            <span class="offline-text">El modo sin conexión está activo </span>
+        </div>
+        
+        <div class="input-method-selector">
+            <button id="showTextInput" class="btn method-switch active" aria-label="Cambiar a entrada de texto">Texto</button>
+            <button id="showVoiceInput" class="btn method-switch" aria-label="Cambiar a entrada de voz">Voz</button>
+        </div>
+
+        <section id="textInputSection" class="text-input-section" aria-label="Sección de entrada de texto">
+            <div class="text-input-container">
+                <label for="inputText">Ingrese el texto a traducir:</label>
+                <textarea 
+                    id="inputText" 
+                    class="text-input" 
+                    placeholder="Escriba aquí el texto que desea traducir..."
+                    aria-label="Campo para ingresar texto a traducir"
+                ></textarea>
+                <button id="translateText" class="btn primary" aria-label="Traducir texto ingresado">Traducir</button>
+            </div>
+        </section>
+
+        <section id="voiceInputSection" class="recording-section hidden" aria-label="Sección de grabación">
+            <div class="recording-status" role="status" aria-live="polite">
+                <span id="recordingIndicator" class="indicator" aria-hidden="true"></span>
+                <span id="recordingStatus" aria-label="Estado de la grabación">Listo para grabar</span>
+                <span id="recordingTime" class="recording-time" aria-label="Tiempo de grabación">00:00</span>
+            </div>
+            <div class="recording-controls" role="group" aria-label="Controles de grabación">
+                <button id="startRecording" class="btn primary" aria-label="Iniciar grabación de voz">Iniciar Grabación</button>
+                <button id="stopRecording" class="btn secondary" disabled aria-label="Detener grabación de voz">Detener Grabación</button>
+            </div>
+        </section>
+
+        <section class="translation-section" aria-label="Sección de traducción">
+            <div class="translation-box" role="region" aria-label="Texto original">
+                <h2>Texto Original</h2>
+                <div id="originalText" class="text-content" aria-live="polite" role="textbox" aria-readonly="true"></div>
+                <div class="text-status" id="originalStatus"></div>
+            </div>
+            <div id="translationProgress" class="progress-bar hidden" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
+                <div class="progress-indicator"></div>
+            </div>
+            <div class="translation-box" role="region" aria-label="Texto traducido">
+                <h2>Traducción</h2>
+                <div id="translatedText" class="text-content" aria-live="polite" role="textbox" aria-readonly="true"></div>
+                <div class="text-status" id="translationStatus"></div>
+            </div>
+        </section>
+
+        <div id="errorMessage" class="error-message hidden" role="alert" aria-live="assertive"></div>
+
+        <section class="feedback-section" aria-label="Sección de retroalimentación">
+            <h2>Proporcione Retroalimentación</h2>
+            <div role="form">
+                <label for="correctedTranslation" class="sr-only">Ingrese la traducción correcta si es necesario</label>
+                <textarea 
+                    id="correctedTranslation" 
+                    name="correctedTranslation"
+                    placeholder="Ingrese la traducción correcta si es necesario..."
+                    aria-label="Campo para ingresar la traducción corregida"
+                ></textarea>
+                <button id="submitFeedback" class="btn primary" aria-label="Enviar retroalimentación de traducción">Enviar Retroalimentación</button>
+            </div>
+        </section>
+    </main>
+    <script src="{{ url_for('static', filename='app.js') }}"></script>
+</body>
+</html>

@@ -1,0 +1,7 @@
+.venv/
+models/
+data/
+logs/
+node_modules/
+package-lock.json
+package.json
