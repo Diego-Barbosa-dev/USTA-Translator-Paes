@@ -1,0 +1,7 @@
+_pycache_/
+logs/
+models/
+package.json
+package-lock.json
+data/nasa_yuwe_dictionary.json
+__pycache__/grammar_engine.cpython-313.pyc
