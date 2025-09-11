@@ -113,22 +113,55 @@ class ConjugationEngine:
         """Cargar reglas gramaticales específicas del Nasa Yuwe"""
         return {
             'verb_suffixes': {
-                'present': ['n', 'te', 'sa'],
-                'past': ['tx', 'txi', 'txin'],
-                'future': ['we', 'wes', 'wet']
+                'present': ['n', 'te', 'sa', 'we'],
+                'past': ['tx', 'txi', 'txin', 'txiwe'],
+                'future': ['we', 'wes', 'wet', 'wesx'],
+                'imperative': ['ka', 'ki', 'ku']
             },
             'person_markers': {
-                '1sg': 'ũ',   # yo
-                '2sg': 'um',  # tú
-                '3sg': 'nas', # él/ella
-                '1pl': 'ũs',  # nosotros
-                '2pl': 'ums', # ustedes
-                '3pl': 'nasa' # ellos/ellas
+                '1sg': 'ũ',     # yo
+                '2sg': 'um',    # tú
+                '3sg': 'nas',   # él/ella
+                '1pl': 'ũs',    # nosotros (inclusivo)
+                '1pl_excl': 'ũh', # nosotros (exclusivo)
+                '2pl': 'ums',   # ustedes
+                '3pl': 'nasa'   # ellos/ellas
             },
             'aspect_markers': {
                 'completive': 'tx',
                 'continuative': 'sa',
-                'habitual': 'te'
+                'habitual': 'te',
+                'iterative': 'txi',
+                'intensive': 'sx'
+            },
+            'directional_markers': {
+                'up': 'ksxa',
+                'down': 'jxu',
+                'towards_speaker': 'yu',
+                'away_from_speaker': 'pa',
+                'inside': 'pila',
+                'outside': 'wala'
+            },
+            'temporal_markers': {
+                'morning': 'uma',
+                'afternoon': 'tay',
+                'night': 'akx',
+                'yesterday': 'ksxaw',
+                'today': 'jxuka',
+                'tomorrow': 'wejxa'
+            },
+            'question_particles': {
+                'what': 'kwe',
+                'who': 'jĩ',
+                'where': 'naa',
+                'when': 'kãjã',
+                'how': 'kãh',
+                'why': 'kwesx'
+            },
+            'negation': {
+                'not': 'kwe',
+                'never': 'kwesx',
+                'nothing': 'kwekwe'
             }
         }
     
@@ -402,6 +435,122 @@ class ConjugationEngine:
             translated_words.append(translation + punctuation)
         
         return ' '.join(translated_words)
+    
+    def detect_temporal_context(self, text: str, source_lang: str) -> Dict:
+        """Detectar contexto temporal en el texto"""
+        temporal_info = {'markers': [], 'tense': 'present'}
+        
+        if source_lang == 'spanish':
+            # Detectar marcadores temporales en español
+            temporal_spanish = {
+                'ayer': 'past',
+                'hoy': 'present', 
+                'mañana': 'future',
+                'ahora': 'present',
+                'antes': 'past',
+                'después': 'future',
+                'en la mañana': 'morning',
+                'en la tarde': 'afternoon',
+                'en la noche': 'night'
+            }
+            
+            text_lower = text.lower()
+            for spanish_marker, tense in temporal_spanish.items():
+                if spanish_marker in text_lower:
+                    temporal_info['markers'].append(spanish_marker)
+                    if tense in ['past', 'present', 'future']:
+                        temporal_info['tense'] = tense
+        
+        return temporal_info
+    
+    def detect_question_type(self, text: str, source_lang: str) -> Dict:
+        """Detectar tipo de pregunta"""
+        question_info = {'is_question': False, 'type': None, 'particle': None}
+        
+        if source_lang == 'spanish':
+            question_words = {
+                'qué': 'what',
+                'quién': 'who', 
+                'dónde': 'where',
+                'cuándo': 'when',
+                'cómo': 'how',
+                'por qué': 'why'
+            }
+            
+            text_lower = text.lower()
+            
+            # Detectar si termina en ?
+            if text.strip().endswith('?'):
+                question_info['is_question'] = True
+            
+            # Detectar tipo de pregunta
+            for spanish_q, q_type in question_words.items():
+                if spanish_q in text_lower:
+                    question_info['is_question'] = True
+                    question_info['type'] = q_type
+                    question_info['particle'] = self.nasa_yuwe_grammar['question_particles'][q_type]
+                    break
+        
+        return question_info
+    
+    def apply_nasa_yuwe_morphology(self, word: str, morphology: Dict) -> str:
+        """Aplicar morfología específica del Nasa Yuwe"""
+        result = word
+        
+        # Aplicar marcadores de persona
+        if 'person' in morphology:
+            person_marker = self.nasa_yuwe_grammar['person_markers'].get(morphology['person'])
+            if person_marker:
+                result = person_marker + ' ' + result
+        
+        # Aplicar marcadores de aspecto
+        if 'aspect' in morphology:
+            aspect_marker = self.nasa_yuwe_grammar['aspect_markers'].get(morphology['aspect'])
+            if aspect_marker:
+                result = result + aspect_marker
+        
+        # Aplicar marcadores direccionales
+        if 'direction' in morphology:
+            dir_marker = self.nasa_yuwe_grammar['directional_markers'].get(morphology['direction'])
+            if dir_marker:
+                result = result + ' ' + dir_marker
+        
+        # Aplicar negación
+        if morphology.get('negated', False):
+            neg_marker = self.nasa_yuwe_grammar['negation']['not']
+            result = neg_marker + ' ' + result
+        
+        return result
+    
+    def enhanced_contextual_translation(self, text: str, source_lang: str, target_lang: str) -> str:
+        """Traducción contextual mejorada usando todos los patrones gramaticales"""
+        if source_lang == target_lang:
+            return text
+        
+        # Detectar contexto
+        temporal_context = self.detect_temporal_context(text, source_lang)
+        question_context = self.detect_question_type(text, source_lang)
+        
+        # Traducción base
+        base_translation = self.enhance_translation(text, source_lang, target_lang)
+        
+        if target_lang == 'nasa_yuwe':
+            # Aplicar mejoras específicas para Nasa Yuwe
+            
+            # Agregar partículas de pregunta si es necesario
+            if question_context['is_question'] and question_context['particle']:
+                base_translation = question_context['particle'] + ' ' + base_translation
+            
+            # Agregar marcadores temporales
+            if temporal_context['markers']:
+                temporal_nasa = self.nasa_yuwe_grammar['temporal_markers']
+                for marker in temporal_context['markers']:
+                    if marker == 'ayer' and 'yesterday' in temporal_nasa:
+                        base_translation = temporal_nasa['yesterday'] + ' ' + base_translation
+                    elif marker == 'mañana' and 'tomorrow' in temporal_nasa:
+                        base_translation = temporal_nasa['tomorrow'] + ' ' + base_translation
+        
+        return base_translation
     
     def translate_spanish_to_nasa_yuwe(self, word: str) -> str:
         """Traducir palabra del español al Nasa Yuwe con conjugaciones"""

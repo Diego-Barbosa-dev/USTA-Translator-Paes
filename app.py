@@ -2,10 +2,21 @@ from flask import Flask, request, jsonify, render_template, send_from_directory
 import os
 import json
 from grammar_engine import ConjugationEngine
+from translation_model import AdvancedTranslationModel
 
 app = Flask(__name__)
 
-# Inicializar el motor de conjugación
+# Inicializar el modelo de traducción avanzado
+translation_model = None
+
+def get_translation_model():
+    global translation_model
+    if translation_model is None:
+        nasa_yuwe_dictionary_path = os.path.join('data', 'nasa_yuwe_dictionary.json')
+        translation_model = AdvancedTranslationModel(nasa_yuwe_dictionary_path)
+    return translation_model
+
+# Mantener compatibilidad con el motor de conjugación
 conjugation_engine = None
 
 def get_conjugation_engine():
@@ -25,7 +36,7 @@ def translate_text_endpoint():
         data = request.get_json()
         text = data.get('text', '').strip()
         source_lang = data.get('source_lang', 'spanish')
-        target_lang = data.get('target_lang', 'sikuani')
+        target_lang = data.get('target_lang', 'nasa_yuwe')
 
         if not text:
             return jsonify({'error': 'No se proporcionó texto para traducir'})
@@ -33,39 +44,40 @@ def translate_text_endpoint():
         if source_lang == target_lang:
             return jsonify({'error': 'El idioma de origen y destino no pueden ser iguales'})
 
-        # Normalizar el texto de entrada
-        text = text.lower()
-
-        # Cargar el diccionario de Nasa Yuwe
-        nasa_yuwe_dictionary_path = os.path.join('data', 'nasa_yuwe_dictionary.json')
-
-        try:
-            with open(nasa_yuwe_dictionary_path, 'r', encoding='utf-8') as f:
-                dictionary = json.load(f)
-            
-            if source_lang == 'spanish' and target_lang == 'nasa_yuwe':
-                translation = translate_to_indigenous(text, dictionary)
-            elif source_lang == 'nasa_yuwe' and target_lang == 'spanish':
-                translation = translate_to_spanish(text, dictionary)
-            else:
-                return jsonify({
-                    'error': 'Solo se admite traducción entre Español y Nasa Yuwe'
-                })
-
+        # Validar idiomas soportados
+        if not ((source_lang == 'spanish' and target_lang == 'nasa_yuwe') or 
+                (source_lang == 'nasa_yuwe' and target_lang == 'spanish')):
             return jsonify({
-                'translation': translation,
-                'status': 'success'
+                'error': 'Solo se admite traducción entre Español y Nasa Yuwe'
             })
 
-        except FileNotFoundError:
-            return jsonify({
-                'error': 'Diccionario de Nasa Yuwe no encontrado'
-            })
+        # Usar el modelo de traducción avanzado
+        model = get_translation_model()
+        result = model.translate(text, source_lang, target_lang)
+
+        return jsonify({
+            'translation': result['translation'],
+            'status': 'success',
+            'method': result['method'],
+            'confidence': result['confidence'],
+            'methods_tried': result.get('methods_tried', [])
+        })
 
     except Exception as e:
         return jsonify({'error': str(e)})
 
-
+@app.route('/api/model-info', methods=['GET'])
+def get_model_info():
+    """Obtener información sobre el modelo de traducción"""
+    try:
+        model = get_translation_model()
+        info = model.get_model_info()
+        return jsonify({
+            'status': 'success',
+            'model_info': info
+        })
+    except Exception as e:
+        return jsonify({'error': str(e)})
 
 def translate_to_indigenous(text, dictionary):
     # Usar el motor de conjugación para mejorar la traducción
