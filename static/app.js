@@ -265,7 +265,47 @@ document.addEventListener('DOMContentLoaded', function() {
             setRecognitionLanguage();
         }
     });
+    
+    // Inicializar toggle de tema
+    initializeThemeToggle();
 });
+
+// Funcionalidad del toggle de tema
+function initializeThemeToggle() {
+    const themeToggle = document.getElementById('themeToggle');
+    const toggleIcon = themeToggle.querySelector('.toggle-icon');
+    
+    // Cargar tema guardado o usar modo oscuro por defecto
+    const savedTheme = localStorage.getItem('theme') || 'dark';
+    applyTheme(savedTheme);
+    
+    // Event listener para el botón toggle
+    themeToggle.addEventListener('click', function() {
+        const currentTheme = document.documentElement.classList.contains('light-mode') ? 'light' : 'dark';
+        const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+        
+        applyTheme(newTheme);
+        localStorage.setItem('theme', newTheme);
+        
+        // Animación del botón
+        themeToggle.style.transform = 'rotate(360deg)';
+        setTimeout(() => {
+            themeToggle.style.transform = '';
+        }, 300);
+    });
+}
+
+function applyTheme(theme) {
+    const toggleIcon = document.querySelector('.toggle-icon');
+    
+    if (theme === 'light') {
+        document.documentElement.classList.add('light-mode');
+        toggleIcon.textContent = '☀️';
+    } else {
+        document.documentElement.classList.remove('light-mode');
+        toggleIcon.textContent = '🌙';
+    }
+}
 
 // Funciones principales de traducción
 document.getElementById('translateText').addEventListener('click', async () => {

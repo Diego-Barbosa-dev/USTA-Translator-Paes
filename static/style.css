@@ -20,6 +20,21 @@
     --white: #FFFFFF;
 }
 
+/* Variables para modo claro */
+:root.light-mode {
+    --primary-color: #0056b3;
+    --secondary-color: #e9ecef;
+    --accent-color: #f8f9fa;
+    --bg-dark: #ffffff;
+    --bg-card: #f8f9fa;
+    --text-primary: #212529;
+    --text-secondary: #6c757d;
+    --border-color: rgba(0, 86, 179, 0.3);
+    --holographic-gradient: linear-gradient(45deg, #0056b3, #e9ecef, #f8f9fa, #0056b3);
+    --glow-color: #0056b3;
+    --white: #000000;
+}
+
 body {
     background: var(--bg-dark);
     background-image: 
@@ -1559,6 +1574,72 @@ textarea::placeholder {
     .translation-box {
         padding: 1.25rem;
     }
+}
+
+/* Estilos para el toggle de tema */
+.theme-toggle-container {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    z-index: 1000;
+}
+
+.theme-toggle {
+    background: var(--bg-card);
+    border: 2px solid var(--border-color);
+    border-radius: 50%;
+    width: 50px;
+    height: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(0, 123, 255, 0.2);
+    position: relative;
+    overflow: hidden;
+}
+
+.theme-toggle:hover {
+    transform: scale(1.1);
+    box-shadow: 0 6px 20px rgba(0, 123, 255, 0.4);
+    border-color: var(--glow-color);
+}
+
+.theme-toggle:active {
+    transform: scale(0.95);
+}
+
+.toggle-icon {
+    font-size: 1.5rem;
+    transition: transform 0.3s ease;
+}
+
+.theme-toggle:hover .toggle-icon {
+    transform: rotate(15deg);
+}
+
+/* Animación para el cambio de tema */
+:root {
+    transition: all 0.3s ease;
+}
+
+/* Responsive para el toggle */
+@media (max-width: 768px) {
+    .theme-toggle-container {
+        top: 0.5rem;
+        right: 0.5rem;
+    }
+    
+    .theme-toggle {
+        width: 40px;
+        height: 40px;
+    }
+    
+    .toggle-icon {
+        font-size: 1.2rem;
+    }
+}
     
     .text-content {
         font-size: 0.9rem;
@@ -1573,4 +1654,3 @@ textarea::placeholder {
         width: 20px;
         height: 20px;
     }
-}
