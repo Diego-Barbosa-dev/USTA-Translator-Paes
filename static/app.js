@@ -281,7 +281,7 @@ function initializeThemeToggle() {
     
     // Event listener para el botón toggle
     themeToggle.addEventListener('click', function() {
-        const currentTheme = document.documentElement.classList.contains('light-mode') ? 'light' : 'dark';
+        const currentTheme = document.body.classList.contains('light-mode') ? 'light' : 'dark';
         const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
         
         applyTheme(newTheme);
@@ -299,9 +299,11 @@ function applyTheme(theme) {
     const toggleIcon = document.querySelector('.toggle-icon');
     
     if (theme === 'light') {
+        document.body.classList.add('light-mode');
         document.documentElement.classList.add('light-mode');
         toggleIcon.textContent = '☀️';
     } else {
+        document.body.classList.remove('light-mode');
         document.documentElement.classList.remove('light-mode');
         toggleIcon.textContent = '🌙';
     }
