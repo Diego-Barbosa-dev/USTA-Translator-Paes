@@ -1,8 +1,8 @@
-# Sistema Avanzado de Traducción Español - Nasa Yuwe
+# Interprete-Nasa Yuwe
 
 ##
 
-El **Sistema De traducción de español a nasa yuwe** es una aplicación web de vanguardia desarrollada con arquitectura híbrida que combina técnicas de procesamiento de lenguaje natural (NLP), inteligencia artificial y preservación cultural digital. El sistema implementa múltiples estrategias de traducción para garantizar la máxima precisión en la traducción bidireccional entre español y Nasa Yuwe, lengua indígena de la comunidad Nasa del Cauca, Colombia.
+El **Interprete Nasa** es una aplicación web de vanguardia desarrollada con arquitectura híbrida que combina técnicas de procesamiento de lenguaje natural (NLP), inteligencia artificial y preservación cultural digital. El sistema implementa múltiples estrategias de traducción para garantizar la máxima precisión en la traducción bidireccional entre español y Nasa Yuwe, lengua indígena de la comunidad Nasa del Cauca, Colombia.
 
 ## Arquitectura del Sistema
 
