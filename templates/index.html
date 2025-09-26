@@ -3,32 +3,46 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Traductor de lenguas indígenas con capacidad de grabación de voz">
-    <title>Traductor</title>
+    <meta name="description" content="Traductor Español - Nasa Yuwe con capacidad de grabación de voz">
+    <title>Traductor Español - Nasa Yuwe</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
-    <main class="container" role="main">
-        <h1>Traductor</h1>
-        
+    <main class="container">
+        <div class="theme-toggle-container">
+            <button type="button" id="themeToggle" class="theme-toggle" aria-label="Cambiar entre modo oscuro y claro">
+                <span class="toggle-icon">🌙</span>
+            </button>
+        </div>
+        <h1 data-text="INTERPRETE-NASA">Traductor Español - Nasa Yuwe</h1>
         <div class="language-selector">
-            <label for="targetLanguage">Seleccione la lengua indígena:</label>
-            <select id="targetLanguage" name="target_lang" class="language-select" aria-label="Seleccionar lengua indígena para traducción">
-                <option value="sikuani">Sikuani</option>
-                <option value="piapoco">Piapoco</option>
-                <option value="achagua">Achagua</option>
-                <option value="guayabero">Guayabero</option>
-            </select>
+            <div class="language-pair">
+                <div class="source-language">
+                    <label for="sourceLanguage">Idioma de origen:</label>
+                    <select id="sourceLanguage" name="source_lang" class="language-select" aria-label="Seleccionar idioma de origen">
+                        <option value="spanish">Español</option>
+                        <option value="nasa_yuwe">Nasa Yuwe</option>
+                    </select>
+                </div>
+                <div class="target-language">
+                    <label for="targetLanguage">Idioma de destino:</label>
+                    <select id="targetLanguage" name="target_lang" class="language-select" aria-label="Seleccionar idioma de destino">
+                        <option value="nasa_yuwe">Nasa Yuwe</option>
+                        <option value="spanish">Español</option>
+                    </select>
+                </div>
+            </div>
         </div>
 
         <div class="offline-indicator" id="offlineStatus">
             <span class="offline-icon">📱</span>
             <span class="offline-text">El modo sin conexión está activo </span>
         </div>
-        
+
         <div class="input-method-selector">
-            <button id="showTextInput" class="btn method-switch active" aria-label="Cambiar a entrada de texto">Texto</button>
-            <button id="showVoiceInput" class="btn method-switch" aria-label="Cambiar a entrada de voz">Voz</button>
+            <button type="button" id="showTextInput" class="btn method-switch active" aria-label="Cambiar a entrada de texto">Texto</button>
+            <button type="button" id="showVoiceInput" class="btn method-switch" aria-label="Cambiar a entrada de voz">Voz</button>
+            <button type="button" id="showAddWordInput" class="btn method-switch" aria-label="Cambiar a agregar palabras">Agregar Palabra</button>
         </div>
 
         <section id="textInputSection" class="text-input-section" aria-label="Sección de entrada de texto">
@@ -40,43 +54,65 @@
                     placeholder="Escriba aquí el texto que desea traducir..."
                     aria-label="Campo para ingresar texto a traducir"
                 ></textarea>
-                <button id="translateText" class="btn primary" aria-label="Traducir texto ingresado">Traducir</button>
+                <button type="button" id="translateText" class="btn primary" aria-label="Traducir texto ingresado">Traducir</button>
             </div>
         </section>
 
         <section id="voiceInputSection" class="recording-section hidden" aria-label="Sección de grabación">
             <div class="recording-status" role="status" aria-live="polite">
                 <span id="recordingIndicator" class="indicator" aria-hidden="true"></span>
-                <span id="recordingStatus" aria-label="Estado de la grabación">Listo para grabar</span>
-                <span id="recordingTime" class="recording-time" aria-label="Tiempo de grabación">00:00</span>
+                <span id="recordingStatus">Listo para grabar</span>
+                <span id="recordingTime" class="recording-time">00:00</span>
             </div>
             <div class="recording-controls" role="group" aria-label="Controles de grabación">
-                <button id="startRecording" class="btn primary" aria-label="Iniciar grabación de voz">Iniciar Grabación</button>
-                <button id="stopRecording" class="btn secondary" disabled aria-label="Detener grabación de voz">Detener Grabación</button>
+                <button type="button" id="startRecording" class="btn primary" aria-label="Iniciar grabación de voz">Iniciar Grabación</button>
+                <button type="button" id="stopRecording" class="btn secondary" disabled aria-label="Detener grabación de voz">Detener Grabación</button>
             </div>
         </section>
 
+        <section id="addWordSection" class="add-word-section hidden" aria-label="Sección para agregar palabras">
+            <div class="add-word-container">
+                <h2>Agregar Nueva Palabra al Diccionario</h2>
+                <div class="add-word-form">
+                    <div class="form-group">
+                        <label for="spanishWord">Palabra en Español:</label>
+                        <input type="text" id="spanishWord" class="form-input" placeholder="Ej: casa, perro, caminar..." aria-label="Palabra en español">
+                    </div>
+                    <div class="form-group">
+                        <label for="nasaYuweTranslation">Traducción en Nasa Yuwe:</label>
+                        <input type="text" id="nasaYuweTranslation" class="form-input" placeholder="Ej: yat, alku, wejxa..." aria-label="Traducción en Nasa Yuwe">
+                    </div>
+                    <div class="form-group">
+                        <label for="wordContext">Contexto/Explicación:</label>
+                        <textarea id="wordContext" class="form-textarea" placeholder="Describe el significado, uso o contexto de la palabra..." aria-label="Contexto o explicación de la palabra"></textarea>
+                    </div>
+                    <button type="button" id="addWordBtn" class="btn primary" aria-label="Agregar palabra al diccionario">Agregar Palabra</button>
+                </div>
+                <div id="addWordStatus" class="add-word-status hidden" role="status" aria-live="polite"></div>
+            </div>
+        </section>
+
+
+
         <section class="translation-section" aria-label="Sección de traducción">
-            <div class="translation-box" role="region" aria-label="Texto original">
+            <section class="translation-box" aria-label="Texto original">
                 <h2>Texto Original</h2>
-                <div id="originalText" class="text-content" aria-live="polite" role="textbox" aria-readonly="true"></div>
+                <textarea id="originalText" class="text-content" aria-live="polite" readonly></textarea>
                 <div class="text-status" id="originalStatus"></div>
-            </div>
-            <div id="translationProgress" class="progress-bar hidden" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
-                <div class="progress-indicator"></div>
-            </div>
-            <div class="translation-box" role="region" aria-label="Texto traducido">
+            </section>
+            <progress id="translationProgress" class="progress-bar hidden" value="0" max="100"></progress>
+            <section class="translation-box" aria-label="Texto traducido">
                 <h2>Traducción</h2>
-                <div id="translatedText" class="text-content" aria-live="polite" role="textbox" aria-readonly="true"></div>
+                <textarea id="translatedText" class="text-content" aria-live="polite" readonly></textarea>
                 <div class="text-status" id="translationStatus"></div>
-            </div>
+            </section>
         </section>
 
         <div id="errorMessage" class="error-message hidden" role="alert" aria-live="assertive"></div>
 
         <section class="feedback-section" aria-label="Sección de retroalimentación">
             <h2>Proporcione Retroalimentación</h2>
-            <div role="form">
+            <form>
                 <label for="correctedTranslation" class="sr-only">Ingrese la traducción correcta si es necesario</label>
                 <textarea 
                     id="correctedTranslation" 
@@ -84,8 +120,8 @@
                     placeholder="Ingrese la traducción correcta si es necesario..."
                     aria-label="Campo para ingresar la traducción corregida"
                 ></textarea>
-                <button id="submitFeedback" class="btn primary" aria-label="Enviar retroalimentación de traducción">Enviar Retroalimentación</button>
-            </div>
+                <button type="submit" id="submitFeedback" class="btn primary" aria-label="Enviar retroalimentación de traducción">Enviar Retroalimentación</button>
+            </form>
         </section>
     </main>
     <script src="{{ url_for('static', filename='app.js') }}"></script>
