@@ -344,7 +344,7 @@ self.logger.info(f"Diccionario cargado: {len(self.dictionary)} entradas")
 
 ## Licencia y Derechos
 
-Este proyecto está licenciado bajo **MIT License**, permitiendo uso comercial y modificación con atribución apropiada. El proyecto respeta y honra los derechos intelectuales de la comunidad Nasa sobre su lengua y cultura.
+Este proyecto está licenciado bajo **Licencia Privativa**, no permitiendo uso comercial y modificación con atribución apropiada. El proyecto respeta y honra los derechos intelectuales de la comunidad Nasa sobre su lengua y cultura.
 
 ### Reconocimientos
 - **Comunidad Nasa**: Por la preservación y enseñanza de su lengua ancestral
@@ -355,5 +355,5 @@ Este proyecto está licenciado bajo **MIT License**, permitiendo uso comercial y
 ---
 
 
-*Última actualización: Septiembre/18/2025*
+*Última actualización: Septiembre/26/2025*
 *Versión del documento: 2.0*
