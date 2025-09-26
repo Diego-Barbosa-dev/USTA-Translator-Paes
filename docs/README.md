@@ -355,5 +355,5 @@ Este proyecto está licenciado bajo **Licencia Privativa**, no permitiendo uso c
 ---
 
 
-*Última actualización: Septiembre/18/2025*
+*Última actualización: Septiembre/26/2025*
 *Versión del documento: 2.0*
