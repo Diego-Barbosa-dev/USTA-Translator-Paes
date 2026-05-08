@@ -1,0 +1,44 @@
+# Dependencias principales del servidor web
+Flask
+Werkzeug
+
+# Dependencias para el modelo de traducción
+transformers
+torch
+tokenizers
+safetensors
+
+# Dependencias para MySQL (XAMPP)
+PyMySQL
+
+# Dependencias para procesamiento de datos
+numpy
+pandas
+scipy
+
+# Dependencias para manejo de archivos JSON y texto
+typing-extensions
+
+# Dependencias para logging y configuración
+python-dotenv
+
+# Dependencias opcionales para reconocimiento de voz (lado cliente)
+# Nota: SpeechRecognition se maneja en el navegador con Web Speech API
+
+# Dependencias para procesamiento de imágenes (si se necesita)
+Pillow
+
+# Dependencias para desarrollo y testing
+pytest
+pytest-flask
+
+# Dependencias del sistema
+requests
+urllib3
+
+# Dependencias para manejo de archivos de audio (opcional)
+soundfile
+
+# Dependencias para compatibilidad
+six
+certifi

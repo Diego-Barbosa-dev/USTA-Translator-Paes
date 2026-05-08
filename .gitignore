@@ -1,0 +1,10 @@
+data/
+models/
+logs/
+*.docx
+.venv/
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+__init__.py
