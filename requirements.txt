@@ -10,6 +10,7 @@ safetensors
 
 # Dependencias para MySQL (XAMPP)
 PyMySQL
+SQLAlchemy
 
 # Dependencias para procesamiento de datos
 numpy

@@ -10,9 +10,9 @@ El **Interprete Nasa** es una aplicación web de vanguardia desarrollada con arq
 El sistema implementa una **arquitectura de microservicios híbrida** con los siguientes componentes principales:
 
 - **Capa de Presentación**: Interfaz web responsiva con capacidades multimodales
-- **Capa de Aplicación**: API REST desarrollada en Flask con endpoints especializados
-- **Capa de Lógica de Negocio**: Motor de traducción híbrido con múltiples estrategias
-- **Capa de Datos**: Sistema de persistencia JSON con capacidades de aprendizaje incremental
+- **Capa de Controladores**: Endpoints Flask concentrados en controladores HTTP
+- **Capa de Servicios**: Lógica de negocio desacoplada por casos de uso
+- **Capa de Persistencia**: Repositorios + entidades ORM con SQLAlchemy
 - **Capa de Servicios Externos**: Integración con modelos de transformers y APIs de reconocimiento de voz
 
 ### 2. Patrones de Diseño Implementados
@@ -124,29 +124,44 @@ pandas==2.1.4             # Análisis de datos
 
 ### Infraestructura
 - **Servidor de Desarrollo**: Flask Development Server
-- **Persistencia**: Sistema de archivos JSON con validación
+- **Persistencia**: Base de datos relacional (MySQL por defecto) abstraída con SQLAlchemy ORM
 - **Logging**: Sistema de logs estructurado con diferentes niveles
 
-## Estructura del Proyecto 
+## Estructura del Proyecto
 
-```
-rebecca.1/
-├── app.py                          # Aplicación principal 
-├── grammar_engine.py               # Motor de análisis gramatical
-├── translation_model.py            # Modelo híbrido de traducción
-├── requirements.txt                # Dependencias del proyecto
-├── .gitignore                     # Configuración de Git
-├── data/                          # Datos y diccionarios
-│   └── nasa_yuwe_dictionary.json  # Diccionario principal
-├── docs/                          # Documentación
-│   └── README.md                  # Este documento
-├── static/                        # Recursos estáticos
-│   ├── app.js                     # Lógica del cliente (577 líneas)
-│   └── style.css                  # Estilos  (1909 líneas)
-├── templates/                   
-│   └── index.html                 # Interfaz principal
-└── logs/                          # Archivos de log del sistema
-    └── app.log                    # Logs de la aplicación
+```text
+USTATranslatorPaes-development/
+├── app.py                          # Flask app factory
+├── config.py                       # Configuracion por ambientes (dev/test/prod)
+├── controllers/
+│   └── api_controller.py           # Endpoints HTTP
+├── services/
+│   ├── container.py                # Inyeccion de dependencias
+│   ├── translation_service.py
+│   ├── dictionary_service.py
+│   ├── media_service.py
+│   └── training_service.py
+├── repositories/
+│   ├── dictionary_repository.py
+│   └── media_repository.py
+├── entities/
+│   └── models.py                   # Entidades ORM
+├── infrastructure/
+│   └── db.py                       # Engine/sesiones SQLAlchemy
+├── database.py                     # Fachada legacy compatible
+├── grammar_engine.py
+├── translation_model.py
+├── core/
+├── tests/
+│   ├── conftest.py
+│   ├── services/
+│   └── repositories/
+├── requirements.txt
+├── .env.example
+├── static/
+├── templates/
+└── docs/
+    └── README.md
 ```
 
 ## Funcionalidades 
@@ -234,15 +249,15 @@ el sistema implementac un modelo que evalua la confianza de las traducciones:
 1. **Clonar el Repositorio**:
 ```bash
 git clone <repository-url>
-cd rebecca.1
+cd USTATranslatorPaes-development
 ```
 
 2. **Crear Entorno Virtual**:
 ```bash
-python -m venv venv
-source venv/bin/activate  # Linux/Mac
+python -m venv .venv
+source .venv/bin/activate  # Linux/Mac
 # o
-venv\Scripts\activate     # Windows
+.venv\Scripts\activate     # Windows
 ```
 
 3. **Instalar Dependencias**:
@@ -250,10 +265,10 @@ venv\Scripts\activate     # Windows
 pip install -r requirements.txt
 ```
 
-4. **Configurar Datos**:
+4. **Configurar Variables de Entorno**:
 ```bash
-mkdir -p data logs
-# Asegurar que nasa_yuwe_dictionary.json existe
+cp .env.example .env
+# Editar .env segun entorno local
 ```
 
 5. **Ejecutar la Aplicación**:
@@ -262,8 +277,42 @@ python app.py
 ```
 
 6. **Acceder al Sistema**:
-```
+```text
 http://localhost:5000
+```
+
+### Configuración por Ambientes
+
+La aplicación soporta tres ambientes mediante `APP_ENV`:
+
+- `dev`: modo desarrollo con `DEBUG=True`.
+- `test`: modo de pruebas con base de datos SQLite en memoria por defecto.
+- `prod`: modo producción con `DEBUG=False`.
+
+Variables principales:
+
+- `APP_ENV`: `dev`, `test` o `prod`.
+- `DATABASE_URL`: conexión principal para runtime.
+- `TEST_DATABASE_URL`: conexión para pruebas.
+- `SECRET_KEY`: clave de seguridad de Flask.
+
+Ejemplo:
+
+```bash
+APP_ENV=prod DATABASE_URL=mysql+pymysql://user:pass@host:3306/dbname python app.py
+```
+
+### Ejecución de Pruebas
+
+Pruebas base incluidas:
+
+- Servicios: validación de reglas de negocio (`DictionaryService`).
+- Repositorios: persistencia ORM (`DictionaryRepository`) con SQLite en memoria.
+
+Ejecutar:
+
+```bash
+python -m pytest -q tests/services tests/repositories
 ```
 
 ## API REST Endpoints
